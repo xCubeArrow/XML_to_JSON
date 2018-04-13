@@ -10,12 +10,12 @@ import java.util.List;
 
 public class SecTry {
 
-
     private static String jsonString = "";
     private static String endBraces = "";
 
-    //Returns a hashmap with a Arraylist of Elements with the same name.
-    //If there are more than one, with the same way, the content of the hashmap equals true WORKS
+    // Returns a hashmap with a Arraylist of Elements with the same name.
+    // If there are more than one, with the same way, the content of the hashmap
+    // equals true WORKS
     static HashMap<ArrayList<Element>, Boolean> isArray(Element[] elements) {
         HashMap<ArrayList<Element>, Boolean> occurring = new HashMap<>();
         HashMap<String, ArrayList<Element>> nameMap = new HashMap<>();
@@ -44,34 +44,37 @@ public class SecTry {
         return occurring;
     }
 
-    //WORKS
+    // WORKS
     static String getAttributes(Element element) {
         List<Attribute> attributes = element.getAttributes();
-        final String[] returnString = {" "};
+        final String[] returnString = { " " };
 
-        attributes.forEach(attribute -> returnString[0] += "\"" + attribute.getName() + "\":\"" + attribute.getValue() + "\",");
+        attributes.forEach(
+                attribute -> returnString[0] += "\"" + attribute.getName() + "\":\"" + attribute.getValue() + "\",");
         if (returnString[0].substring(returnString[0].length() - 1).equals(","))
             return returnString[0].substring(0, returnString[0].length() - 1);
         return returnString[0];
     }
 
-    //WORKS
+    // WORKS
     static String attributesAndContent(Element element) {
-        return "{\"content\":\"" + element.getText() + "\"," + getAttributes(element) + "}";
+        if (element.hasAttributes())
+            return "{\"content\":\"" + element.getText() + "\"," + getAttributes(element) + "}";
+        else
+            return element.getText();
     }
 
-    //displays a couple of Elements with the same names MAYBE WORKS
+    // displays a couple of Elements with the same names MAYBE WORKS
     static String displayArray(Element[] elements) {
 
-        final String[] returnString = {""};
+        final String[] returnString = { "" };
 
         returnString[0] += "\"" + elements[0].getName() + "\":[";
 
         for (Element element : elements) {
             List<Element> children = element.getChildren();
             if (children.size() > 0) {
-
-                children.forEach(child -> returnString[0] += mainWithoutName(child) + "},");
+                children.forEach(child -> returnString[0] += mainWithoutName(child) + ",");
             } else {
 
                 returnString[0] += attributesAndContent(element);
@@ -79,13 +82,17 @@ public class SecTry {
             }
         }
         // The substring because of a comma that would throw errors
-        return returnString[0].substring(0, returnString.length - 1);
+        if (returnString[0].substring(returnString.length - 1).equals(","))
+
+            return returnString[0].substring(0, returnString.length - 1) + "]";
+        else
+            return returnString[0] + "]";
     }
 
-    //WORKS
+    // WORKS
     static String displayNormal(Element element) {
         ArrayList<Element> leftOver = new ArrayList<>();
-        final String[] returnString = {""};
+        final String[] returnString = { "" };
         String name = element.getName();
         returnString[0] = returnString[0] + "\"" + name + "\":{";
         returnString[0] += getAttributes(element);
@@ -105,7 +112,7 @@ public class SecTry {
         });
 
         stuff.forEach((string3, string2) -> {
-            //TODO:Make different datatypes usable
+            // TODO:Make different datatypes usable
 
             returnString[0] = returnString[0] + "\"" + string3 + "\":" + string2 + ",";
         });
@@ -113,20 +120,20 @@ public class SecTry {
             returnString[0] += main(leftOver.toArray(new Element[leftOver.size()]));
         returnString[0] = returnString[0].substring(0, returnString[0].length() - 1);
         returnString[0] += "},";
-        return returnString[0].substring(0, returnString[0].length() - 1);
+        return returnString[0];
     }
-
 
     private static String mainWithoutName(Element element) {
 
         String returnString = "{";
         returnString += getAttributes(element);
         returnString += main(element.getChildren().toArray(new Element[element.getChildren().size()]));
-        return returnString + "}";
+        returnString += "}";
+        return returnString;
     }
 
     private static String main(Element[] elements) {
-        final String[] returnString = {""};
+        final String[] returnString = { "" };
         HashMap<ArrayList<Element>, Boolean> isArrayHashMap = isArray(elements);
 
         isArrayHashMap.forEach(((arrayList, aBoolean) -> {
@@ -140,7 +147,6 @@ public class SecTry {
         return returnString[0];
     }
 
-
     public static void main(String[] args) {
         File inputFile = new File("src\\xml.xml");
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -149,12 +155,10 @@ public class SecTry {
 
             Element root = document.getRootElement();
 
-
-            Element[] elements = {root};
+            Element[] elements = { root };
             jsonString += "{" + main(elements);
 
-            endBraces = "}" + endBraces;
-            System.out.println(jsonString + endBraces);
+            System.out.println(jsonString + "}}");
         } catch (Exception e) {
             e.printStackTrace();
         }
