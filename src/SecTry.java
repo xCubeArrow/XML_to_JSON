@@ -142,7 +142,6 @@ public class SecTry {
 
 
     public static void main(String[] args) {
-        File inputFile = new File("C:\\Users\\Martin Goetze\\workspace\\XML to JSON\\res\\xml.xml");
         SAXBuilder saxBuilder = new SAXBuilder();
         try {
             Document document = saxBuilder.build(inputFile);
