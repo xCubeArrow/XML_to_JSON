@@ -20,7 +20,6 @@ public class MyOwn {
         String endBraces = "}";
 
 
-        File inputFile = new File("C:\\Users\\Martin Goetze\\workspace\\XML to JSON\\res\\xml.xml");
         SAXBuilder saxBuilder = new SAXBuilder();
         try {
             Document document = saxBuilder.build(inputFile);
