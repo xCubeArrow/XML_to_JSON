@@ -142,6 +142,10 @@ public class SecTry {
 
 
     public static void main(String[] args) {
+<<<<<<< HEAD
+=======
+        File inputFile = new File("src\\xml.xml");
+>>>>>>> Rearranged some code
         SAXBuilder saxBuilder = new SAXBuilder();
         try {
             Document document = saxBuilder.build(inputFile);

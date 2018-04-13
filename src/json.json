@@ -1,0 +1,13 @@
+{
+  "config": {
+    "items": {
+      "mode": {
+        "content": "9",
+        "gender": "ne"
+      },
+      "unit": 5,
+      "current": 100,
+      "interactive": 3
+    }
+  }
+}

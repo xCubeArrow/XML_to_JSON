@@ -20,6 +20,8 @@ public class MyOwn {
         String endBraces = "}";
 
 
+        File inputFile = new File("src\\xml.xml");
+
         SAXBuilder saxBuilder = new SAXBuilder();
         try {
             Document document = saxBuilder.build(inputFile);
