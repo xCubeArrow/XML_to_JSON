@@ -4,7 +4,6 @@ import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -180,7 +179,7 @@ public class Parser {
                 writer.close();
             }
             catch (Exception e){
-                System.out.println("XML File is not convertible.");
+                System.out.println("XML file is not convertible.");
                 e.printStackTrace();
             }
 
