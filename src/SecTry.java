@@ -2,8 +2,11 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
+import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,8 +84,8 @@ public class SecTry {
             }
         }
         // The substring because of a comma that would throw errors
-        while (returnString[0].substring(returnString.length - 1).equals(","))
-            returnString[0] = returnString[0].substring(0, returnString.length - 1);
+
+        returnString[0] = returnString[0].substring(0, returnString[0].length() - 1);
 
         return returnString[0] + "],";
     }
@@ -166,7 +169,21 @@ public class SecTry {
             Element[] elements = {root};
             jsonString += "{" + main(elements);
 
-            System.out.println(jsonString + "}");
+            if(jsonString.substring(jsonString.length() - 1).equals(","))
+                jsonString = jsonString.substring(0, jsonString.length() - 1);
+            jsonString += "}";
+            try {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                FileWriter writer = new FileWriter("src\\json.json");
+
+                writer.write(jsonObject.toString());
+                writer.close();
+            }
+            catch (Exception e){
+                System.out.println("XML File is not convertible.");
+                e.printStackTrace();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
