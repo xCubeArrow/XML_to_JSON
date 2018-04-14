@@ -1,13 +1,45 @@
 {
-  "config": {
-    "items": {
-      "mode": {
-        "content": "9",
-        "gender": "ne"
+  "PurchaseOrder": {
+    "PurchaseOrderNumber": "99503",
+    "OrderDate": "1999-10-20",
+    "DeliveryNotes": "Please leave packages in shed by driveway.",
+    "Items": {
+      "Item": [
+        {
+          "PartNumber": "872-AA",
+          "USPrice": "148.95",
+          "Comment": "Confirm this is electric",
+          "ProductName": "Lawnmower",
+          "Quantity": "1"
+        },
+        {
+          "PartNumber": "926-AA",
+          "ShipDate": "1999-05-21",
+          "USPrice": "39.98",
+          "Quantity": "2",
+          "ProductName": "Baby Monitor"
+        }
+      ]
+    },
+    "Address": [
+      {
+        "Type": "Shipping",
+        "Country": "USA",
+        "City": "Mill Valley",
+        "State": "CA",
+        "Street": "123 Maple Street",
+        "Name": "Ellen Adams",
+        "Zip": "10999"
       },
-      "unit": 5,
-      "current": 100,
-      "interactive": 3
-    }
+      {
+        "Type": "Billing",
+        "State": "PA",
+        "Name": "Tai Yee",
+        "City": "Old Town",
+        "Zip": "95819",
+        "Country": "USA",
+        "Street": "8 Oak Avenue"
+      }
+    ]
   }
 }
