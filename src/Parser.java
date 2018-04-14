@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SecTry {
+public class Parser {
 
     private static String jsonString = "";
 
