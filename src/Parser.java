@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Parser {
 
@@ -28,7 +29,8 @@ public class Parser {
 
                 ArrayList<Element> list = nameMap.get(name);
                 list.add(element);
-                nameMap.put(name, list);
+
+                nameMap.replace(name, list);
             } else {
                 ArrayList<Element> objects = new ArrayList<>();
                 objects.add(element);
@@ -51,8 +53,7 @@ public class Parser {
         List<Attribute> attributes = element.getAttributes();
         final String[] returnString = {" "};
 
-        attributes.forEach(
-                attribute -> returnString[0] += "\"" + attribute.getName() + "\":\"" + attribute.getValue() + "\",");
+        attributes.forEach(attribute -> returnString[0] += "\"" + attribute.getName() + "\":\"" + attribute.getValue() + "\",");
 
         return returnString[0];
     }
@@ -82,11 +83,15 @@ public class Parser {
 
             }
         }
-        // The substring because of a comma that would throw errors
-
-        returnString[0] = returnString[0].substring(0, returnString[0].length() - 1);
+        returnString[0] = removeLastComma(returnString[0]);
 
         return returnString[0] + "],";
+    }
+
+    private static String removeLastComma(String s) {
+        if (jsonString.substring(jsonString.length() - 1).equals(","))
+            return s.substring(0, s.length() - 1);
+        return s;
     }
 
     static String displaySingle(Element element) {
@@ -125,7 +130,7 @@ public class Parser {
         });
         if (leftOver.size() > 0)
             returnString[0] += main(leftOver.toArray(new Element[leftOver.size()]));
-        returnString[0] = returnString[0].substring(0, returnString[0].length() - 1);
+        returnString[0] = removeLastComma(returnString[0]);
         returnString[0] += "},";
         return returnString[0];
     }
@@ -137,17 +142,19 @@ public class Parser {
         returnString += getAttributes(element);
         returnString += main(element.getChildren().toArray(new Element[element.getChildren().size()]));
         if (returnString.substring(returnString.length() - 1).equals(","))
-            returnString = returnString.substring(0, returnString.length() - 1);
+            returnString = removeLastComma(returnString);
         returnString += "}";
         return returnString;
     }
 
     private static String main(Element[] elements) {
         final String[] returnString = {""};
+
         HashMap<ArrayList<Element>, Boolean> isArrayHashMap = isArray(elements);
 
-        isArrayHashMap.forEach(((arrayList, aBoolean) -> {
-            if (aBoolean) {
+        isArrayHashMap.forEach(((arrayList, isArray) -> {
+
+            if (isArray) {
                 returnString[0] += displayArray(arrayList.toArray(new Element[arrayList.size()]));
 
             } else {
@@ -157,28 +164,38 @@ public class Parser {
         return returnString[0];
     }
 
+    //Opens the XML file, calls the first function (main()) and saves the json file
     public static void main(String[] args) {
-        File inputFile = new File("src\\xml.xml");
-        SAXBuilder saxBuilder = new SAXBuilder();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("XML location: ");
+        File inputFile = new File(sc.nextLine().replace("\\", "\\\\"));
+
+
         try {
+            SAXBuilder saxBuilder = new SAXBuilder();
             Document document = saxBuilder.build(inputFile);
 
             Element root = document.getRootElement();
-
             Element[] elements = {root};
-            jsonString += "{" + main(elements);
 
-            if(jsonString.substring(jsonString.length() - 1).equals(","))
-                jsonString = jsonString.substring(0, jsonString.length() - 1);
+            jsonString += "{";
+
+            jsonString += main(elements);
+
+            jsonString = removeLastComma(jsonString);
             jsonString += "}";
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                FileWriter writer = new FileWriter("src\\json.json");
 
+            jsonString = jsonString.replace("\n", "     ");
+
+            try {
+                System.out.println("Saving location: ");
+                FileWriter writer = new FileWriter(sc.nextLine());
+
+                JSONObject jsonObject = new JSONObject(jsonString);
                 writer.write(jsonObject.toString());
                 writer.close();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("XML file is not convertible.");
                 e.printStackTrace();
             }
