@@ -18,7 +18,7 @@ public class Parser {
 
     // Returns a hashmap with a Arraylist of Elements with the same name.
     // If there are more than one, with the same way, the content of the hashmap
-    // equals true WORKS
+    // equals true
     static HashMap<ArrayList<Element>, Boolean> isArray(Element[] elements) {
         HashMap<ArrayList<Element>, Boolean> occurring = new HashMap<>();
         HashMap<String, ArrayList<Element>> nameMap = new HashMap<>();
@@ -48,7 +48,6 @@ public class Parser {
         return occurring;
     }
 
-    // WORKS
     static String getAttributes(Element element) {
         List<Attribute> attributes = element.getAttributes();
         final String[] returnString = {" "};
@@ -58,7 +57,6 @@ public class Parser {
         return returnString[0];
     }
 
-    // WORKS
     static String attributesAndContent(Element element) {
         if (element.hasAttributes())
             return "{\"content\":\"" + element.getText() + "\"," + getAttributes(element) + "}";
@@ -66,7 +64,7 @@ public class Parser {
             return "\"" + element.getText() + "\"";
     }
 
-    // displays a couple of Elements with the same names MAYBE WORKS
+    // displays a couple of Elements with the same names
     static String displayArray(Element[] elements) {
 
         final String[] returnString = {""};
@@ -98,7 +96,6 @@ public class Parser {
         return "\"" + element.getName() + "\":\"" + element.getText() + "\",";
     }
 
-    // WORKS
     static String displayNormal(Element element) {
 
         if (element.getChildren().size() == 0)
