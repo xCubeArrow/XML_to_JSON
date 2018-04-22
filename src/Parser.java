@@ -19,17 +19,15 @@ public class Parser {
     // Returns a hashmap with a Arraylist of Elements with the same name.
     // If there are more than one, with the same way, the content of the hashmap
     // equals true
-    static HashMap<ArrayList<Element>, Boolean> isArray(Element[] elements) {
-        HashMap<ArrayList<Element>, Boolean> occurring = new HashMap<>();
+    private static HashMap<ArrayList<Element>, Boolean> ifElementNameOccursMultipleTimes(Element[] elements) {
+        HashMap<ArrayList<Element>, Boolean> result = new HashMap<>();
         HashMap<String, ArrayList<Element>> nameMap = new HashMap<>();
 
         for (Element element : elements) {
             String name = element.getName();
             if (nameMap.containsKey(name)) {
-
                 ArrayList<Element> list = nameMap.get(name);
                 list.add(element);
-
                 nameMap.replace(name, list);
             } else {
                 ArrayList<Element> objects = new ArrayList<>();
@@ -37,18 +35,19 @@ public class Parser {
                 nameMap.put(name, objects);
             }
         }
-        nameMap.forEach((s, elements1) -> {
+
+        nameMap.forEach((name, elements1) -> {
             if (elements1.size() > 1)
-                occurring.put(elements1, true);
+                result.put(elements1, true);
 
             else
-                occurring.put(elements1, false);
+                result.put(elements1, false);
         });
 
-        return occurring;
+        return result;
     }
 
-    static String getAttributes(Element element) {
+    private static String getAttributes(Element element) {
         List<Attribute> attributes = element.getAttributes();
         final String[] returnString = {" "};
 
@@ -57,7 +56,7 @@ public class Parser {
         return returnString[0];
     }
 
-    static String attributesAndContent(Element element) {
+    private static String displayAttributesAndContent(Element element) {
         if (element.hasAttributes())
             return "{\"content\":\"" + element.getText() + "\"," + getAttributes(element) + "}";
         else
@@ -65,24 +64,19 @@ public class Parser {
     }
 
     // displays a couple of Elements with the same names
-    static String displayArray(Element[] elements) {
+    private static String displayElementsWithTheSameName(Element[] elements) {
 
-        final String[] returnString = {""};
-
-        returnString[0] += "\"" + elements[0].getName() + "\":[";
+        final String[] returnString = {"\"" + elements[0].getName() + "\":["};
 
         for (Element element : elements) {
             List<Element> children = element.getChildren();
             if (children.size() > 0) {
-                returnString[0] += mainWithoutName(element) + ",";
+                returnString[0] += displayChildrenAndAttributes(element) + ",";
             } else {
-
-                returnString[0] += attributesAndContent(element);
-
+                returnString[0] += displayAttributesAndContent(element);
             }
         }
         returnString[0] = removeLastComma(returnString[0]);
-
         return returnString[0] + "],";
     }
 
@@ -92,70 +86,87 @@ public class Parser {
         return s;
     }
 
-    static String displaySingle(Element element) {
+    private static String displayElementWithoutChildren(Element element) {
         return "\"" + element.getName() + "\":\"" + element.getText() + "\",";
     }
 
-    static String displayNormal(Element element) {
+    private static String displayNormalElement(Element element) {
 
         if (element.getChildren().size() == 0)
-            return displaySingle(element);
+            return displayElementWithoutChildren(element);
 
-        ArrayList<Element> leftOver = new ArrayList<>();
         final String[] returnString = {""};
         String name = element.getName();
-        returnString[0] = returnString[0] + "\"" + name + "\":{";
-        returnString[0] += getAttributes(element);
-
-        HashMap<String, String> stuff = new HashMap<>();
-
         List<Element> children = element.getChildren();
 
-        children.forEach(e -> {
-            if (e.getChildren().size() > 0) {
-                leftOver.add(e);
-
-            } else if (!e.hasAttributes())
-                stuff.put(e.getName(), e.getText());
-            else
-                returnString[0] += "\"" + e.getName() + "\":" + attributesAndContent(e) + ",";
-        });
-
-        stuff.forEach((string3, string2) -> {
-            // TODO:Make different datatypes usable
-            returnString[0] = returnString[0] + "\"" + string3 + "\":\"" + string2 + "\",";
-        });
-        if (leftOver.size() > 0)
-            returnString[0] += main(leftOver.toArray(new Element[leftOver.size()]));
+        returnString[0] = returnString[0] + "\"" + name + "\":{";
+        returnString[0] += getAttributes(element);
+        returnString[0] += displayChildren(children);
         returnString[0] = removeLastComma(returnString[0]);
         returnString[0] += "},";
         return returnString[0];
     }
 
-    private static String mainWithoutName(Element element) {
+
+    public static String displayChildren(List<Element> children) {
+
+        ArrayList<Element> elementsWithChildren = new ArrayList<>();
+        ArrayList<Element> nameAndTextArrayList = new ArrayList<>();
+        String[] returnString = {""};
+
+        children.forEach(e -> {
+            if (e.getChildren().size() > 0) {
+                elementsWithChildren.add(e);
+
+            } else if (!e.hasAttributes())
+                nameAndTextArrayList.add(e);
+            else
+                returnString[0] += "\"" + e.getName() + "\":" + displayAttributesAndContent(e) + ",";
+        });
+
+        returnString[0] += displayNameAndTexts(nameAndTextArrayList);
+        returnString[0] += main(elementsWithChildren.toArray(new Element[elementsWithChildren.size()]));
+
+        return returnString[0];
+    }
+
+    private static String displayNameAndTexts(ArrayList<Element> elements) {
+
+        String[] returnString = {""};
+        elements.forEach(element -> {
+            // TODO:Make different datatypes usable
+            returnString[0] += displayElementWithoutChildren(element);
+        });
+
+        return returnString[0];
+    }
+
+    private static String displayChildrenAndAttributes(Element element) {
 
         String returnString = "{";
 
         returnString += getAttributes(element);
+
         returnString += main(element.getChildren().toArray(new Element[element.getChildren().size()]));
-        if (returnString.substring(returnString.length() - 1).equals(","))
-            returnString = removeLastComma(returnString);
+
+        returnString = removeLastComma(returnString);
+
         returnString += "}";
+
         return returnString;
     }
 
     private static String main(Element[] elements) {
         final String[] returnString = {""};
 
-        HashMap<ArrayList<Element>, Boolean> isArrayHashMap = isArray(elements);
+        HashMap<ArrayList<Element>, Boolean> isArrayHashMap = ifElementNameOccursMultipleTimes(elements);
 
         isArrayHashMap.forEach(((arrayList, isArray) -> {
-
             if (isArray) {
-                returnString[0] += displayArray(arrayList.toArray(new Element[arrayList.size()]));
+                returnString[0] += displayElementsWithTheSameName(arrayList.toArray(new Element[arrayList.size()]));
 
             } else {
-                returnString[0] += displayNormal(arrayList.get(0));
+                returnString[0] += displayNormalElement(arrayList.get(0));
             }
         }));
         return returnString[0];
