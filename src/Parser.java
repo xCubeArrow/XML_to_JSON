@@ -156,6 +156,7 @@ public class Parser {
         return returnString;
     }
 
+
     private static String main(Element[] elements) {
         final String[] returnString = {""};
 
@@ -196,19 +197,23 @@ public class Parser {
 
             jsonString = jsonString.replace("\n", "     ");
 
-            try {
-                System.out.println("Saving location: ");
-                FileWriter writer = new FileWriter(sc.nextLine());
-
-                JSONObject jsonObject = new JSONObject(jsonString);
-                writer.write(jsonObject.toString());
-                writer.close();
-            } catch (Exception e) {
-                System.out.println("XML file is not convertible.");
-                e.printStackTrace();
-            }
+            saveJSON(sc);
 
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveJSON(Scanner sc) {
+        try {
+            System.out.println("Saving location: ");
+            FileWriter writer = new FileWriter(sc.nextLine());
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+            writer.write(jsonObject.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("XML file is not convertible.");
             e.printStackTrace();
         }
     }
