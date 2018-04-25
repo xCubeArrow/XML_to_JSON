@@ -203,10 +203,13 @@ public class Parser {
     public void saveJSON(File file) {
         try {
 
+
             FileWriter writer = new FileWriter(file);
             JSONObject jsonObject = new JSONObject(jsonString);
             writer.write(jsonObject.toString());
             writer.close();
+
+            System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
