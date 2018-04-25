@@ -1,11 +1,13 @@
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -173,47 +175,39 @@ public class Parser {
         return returnString[0];
     }
 
+
     //Opens the XML file, calls the first function (main()) and saves the json file
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
 
-        System.out.println("XML location: ");
-        File inputFile = new File(sc.nextLine().replace("\\", "\\\\"));
+            new GUI().build();
 
-
-        try {
-            SAXBuilder saxBuilder = new SAXBuilder();
-            Document document = saxBuilder.build(inputFile);
-
-            Element root = document.getRootElement();
-            Element[] elements = {root};
-
-            jsonString += "{";
-
-            jsonString += main(elements);
-
-            jsonString = removeLastComma(jsonString);
-            jsonString += "}";
-
-            jsonString = jsonString.replace("\n", "     ");
-
-            saveJSON(sc);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private static void saveJSON(Scanner sc) {
-        try {
-            System.out.println("Saving location: ");
-            FileWriter writer = new FileWriter(sc.nextLine());
+    public void setup(File inputFile) throws JDOMException, IOException {
+        SAXBuilder saxBuilder = new SAXBuilder();
+        Document document = saxBuilder.build(inputFile);
 
+        Element root = document.getRootElement();
+        Element[] elements = {root};
+
+        jsonString += "{";
+
+        jsonString += main(elements);
+
+        jsonString = removeLastComma(jsonString);
+        jsonString += "}";
+
+        jsonString = jsonString.replace("\n", "     ");
+    }
+
+    public void saveJSON(File file) {
+        try {
+
+            FileWriter writer = new FileWriter(file);
             JSONObject jsonObject = new JSONObject(jsonString);
             writer.write(jsonObject.toString());
             writer.close();
         } catch (Exception e) {
-            System.out.println("XML file is not convertible.");
             e.printStackTrace();
         }
     }
